@@ -10,11 +10,11 @@ function validateName(name) {
 }
 
 function validateEmail(email) {
-    return /^[a-z0-9._]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$/.test(email)
+    return /^[A-Za-z0-9._]+@[A-Za-z0-9]+\.[A-za-z]+\.?([A-za-z]+)?$/.test(email)
 }
 
 function validatePhone(phone) {
-    return /\+[1-9]{2}? ?\(?[1-9]{2}\)? ?(?:[2-8]|9[1-9])[0-9]{3}\-?[0-9]{4}/.test(phone)
+    return /^\+[1-9]{2}? ?\(?[1-9]{2}\)? ?(?:[2-8]|9[1-9])[0-9]{3}\-?[0-9]{4}$/.test(phone)
 }
 
 
@@ -51,13 +51,15 @@ function cadastrar(req, res, next) {
 function atualizar(req, res, next) {
     console.log('Atualizando registro...')
     try {
-        const id = req.params
+        const id = req.params.id
         const registro = req.body
+        console.log(id)
 
         if(!validateId(id)) { throw 'Error em [atualizar]: Id inválido.' }
 
         // Registra alterações no postgres.
 
+        res.send(201)
     } catch (e) {
         const error = new Error(e)
         error.status = 400
@@ -66,12 +68,13 @@ function atualizar(req, res, next) {
 }
 
 function deletar(req, res, next) {
-    res.send('Deletnado registro...')
+    console.log('Deletnado registro...')
     try {
-        const id = req.param
+        const id = req.param.id
         if(!validateId(id)) { throw 'Error em [deletar]: Id inválido.' }
 
         // Deleta regristro no postgres.
+        res.send(204)
     } catch (e)
     {
         const error = new Error(e)
