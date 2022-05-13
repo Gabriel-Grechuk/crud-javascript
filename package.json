@@ -1,8 +1,8 @@
 {
-  "name": "teste-backend",
+  "name": "crud-javascript",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Crud em javascript e postegresql",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
