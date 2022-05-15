@@ -1,6 +1,9 @@
 # Migrations
 migrations
 
+# npm lock.
+package-lock.json
+
 # Logs
 logs
 *.log
