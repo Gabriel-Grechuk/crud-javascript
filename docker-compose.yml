@@ -15,7 +15,7 @@ services:
       - docker-net
 
   backend-server:
-    image: server
+    build: .
     command: npm start
     ports:
       - "8080:8080"
