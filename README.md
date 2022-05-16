@@ -122,15 +122,15 @@ Para configurar o serviço do docker em um linux com Systemd
 
 Caso o problema ainda ocorra, trata-se de permissões do usuário. Adicione o seu usuário ao grupo docker e execute o `./configure` e os outros scripts `*.sh` desta pasta como `sudo`.
 
-  sudo usermod -aG docker $USER
-  sudo ./configure.sh
+	sudo usermod -aG docker $USER
+	sudo ./configure.sh
 
 ### "Error starting userland proxy: listen tcp4 0.0.0.0:5432: bind: address already in use"
 Esse erro geralmente é causado por uma instância do `postgresql` rodando fora do container `docker` ou alguma outra aplicação.
 
 Rode o comando
 
-  lsof -i :5432
+	lsof -i :5432
 
 para se assegurar de que não há nenhum arquivo sendo usado pelo processo. Casso `não retorne nada`, pode executar livremente o comando
 
@@ -138,6 +138,6 @@ para se assegurar de que não há nenhum arquivo sendo usado pelo processo. Cass
 
 ele vai retornar as informações do processo sendo executado na porta :5432. No campo `Process`, estará informado o `pid` do processo ( Ex: `users:(("postgres",pid=26058,fd=5))`) e pode utiliza-lo para matar a execução.
 
-  sudo kill <pid>
+	sudo kill <pid>
 
 E já pode executar o comando `./configure.sh` novamente, ou `sudo ./configure.sh` se necessário.
