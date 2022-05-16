@@ -13,15 +13,3 @@ services:
       - "5432:5432"
     networks:
       - docker-net
-
-  backend-server:
-    build: .
-    command: npm start
-    ports:
-      - "8080:8080"
-    volumes:
-      - .:/usr/backend
-      - /usr/backend/node_modules
-    depends_on:
-      - postgres-db
-
