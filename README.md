@@ -117,8 +117,8 @@ Esse problema tem duas causas possíveis: O serviço do docker não está rodado
 
 Para configurar o serviço do docker em um linux com Systemd
 
-  sudo systemctl enable docker
-  sudo systemctl start docker
+ 	sudo systemctl enable docker
+ 	sudo systemctl start docker
 
 Caso o problema ainda ocorra, trata-se de permissões do usuário. Adicione o seu usuário ao grupo docker e execute o `./configure` e os outros scripts `*.sh` desta pasta como `sudo`.
 
