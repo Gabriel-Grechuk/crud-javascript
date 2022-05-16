@@ -1,3 +1,3 @@
 #!/bin/sh
-docker-compose rm backend-server
+docker-compose stop postgres-db
 docker-compose rm postgres-db 

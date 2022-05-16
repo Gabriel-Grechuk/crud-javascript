@@ -1,2 +1,4 @@
 #!/bin/sh
-docker-compose up -d 
+docker-compose up
+npm start ; docker-compose stop postgres-db
+
