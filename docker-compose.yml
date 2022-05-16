@@ -5,15 +5,6 @@ networks:
     driver: bridge
 
 services:
-  backend-server:
-    build: .
-    command: npm start
-    ports:
-      - "8080:8080"
-    volumes:
-      - .:/usr/backend
-      - /usr/backend/node_modules
-
   postgres-db:
     image: postgres
     environment:

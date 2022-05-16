@@ -1,104 +1,111 @@
 # CRUD-JAVASCRIPT
-## Implementações da branch
-Nesta branch eu criei uma implementação do servidor node, com as rotas configuradas e validação de entradas. Infelizmente, preciso recriar as configs do Docker, para poder subir uma instância do postgres, carregando um banco de dados já criado, e fazer a comunicação com o servidor node através do knex
+## Como usar
+### Dependências
+Dependências necessárias para rodar o servidor e suas versões recomendadas.
+ * `node v12.22.12` ou superior.
+ * `npm 6.14.16` ou superior.
+ * `docker 20.10.16` ou superior.
+ * `docker-compose 1.25.0` ou superior.
+ * `psql 14.3` ou superior.
+ * `insomnia`
 
-### Rodando o servidor
-Para rodar basta ter uma instalação do `node 10.19.0` e `npm 6.14.4` e executar:
+### Como executar a aplicação
+Para poder executar este programa, primeiro deve clonar este repositório, para isso execute
 
-    npm install
+    git clone https://github.com/Gabriel-Grechuk/crud-javascript.git
+    cd crud-javascript
 
-para instalar as dependências e
+#### Configurando
+Logo depois, é necessário rodar o script de configuração, que é o responsável por instalar todas as dependências do `node` via `npm`, subir um container do `docker` com uma imagem do `postgresql` instalada, realizar a primeira migration do `prisma` e baixar, extrair e inserir o arquivo contendo 10mi de registro de usuários em formato CSV com o `psql`. Para isso basta rodar o script
 
-    npm start
+    chmod 775 ./configure.sh
+    ./configure.sh
 
-para rodar o servidor.
-Caso em seu terminal mostre a mensagem `Server rodando na porta 8080`, significa que a execução do servidor foi bem sucedida e está rodando em `localhost:8080`.
+Este script, dentro de alguns instantes, solicitará que você entre a senha configurada para a comunicação do `psql` com o `postgresql`. Basta digitar a senha `123123` e pressionar enter e ele imediatamente estará carregando os registros para dentro do banco de dados. Posteriormente, informará que o banco de dados já está configurado e já é possível proceguir com a execução.
 
-### Testando requisições
-Para testar as rotas / requisiçẽos, recomenda-se usar o `insomnia` e realizar as chamadas.
+**Este script leva em torno de 10 a 20 minutos para concluir a sua execução, dependendo da configuração da máquina sendo utilizada.**
 
-#### Listar
-Para listar, basta enviar um `GET` para a rota
+#### Rodando aplicação.
+Com a execução do `./configure.sh` concluída, já é possível executar o servidor do CRUD, para isto, basta executar
+
+    chmod 775 ./run.sh
+    ./run.sh
+
+Durante a execução, ele estará usando um servidor `postgresql` no `docker-compose` em segundo plano, e mostrará o prompt do `node`, informando em qual porta a aplicação está sendo executada. Para finalizar a execução, basta pressionar `Ctrl + c` no terminal que o servidor `node` será encerrado. Para parar a execução da instância do `docker-compose`, basta rodar
+
+    chmod 775 ./stop-composer.sh
+    ./stop-composer.sh
+
+#### Removendo container `postgresql` do `docker`
+Quando não for mais necessário executar a aplicação, os containers e suas configurações podem ser facilmente removidas. Para isso, basta executar o script
+
+    chmod 775 ./remove-docker.sh
+    ./remove-docker.sh
+
+e pronto, os containers `docker` foram removidos. Caso deseje usar a aplicação com sua base de dados novamente, é necessário executar o `./configure.sh` novamente.
+
+### Fazendo requisições e CRUD
+Para este fim, recomendo usar o `insomnia`, assim pode importar o arquivo `requests-Insomnia.json` para dentro dele e já ter configurados exemplos de requests para facilitar o teste das operações.
+
+#### Listar cadastros
+A listagem dos cadastros é paginada de 20 em 20 registros, e pode ser feita através de uma simples requisição `GET` para a rota
 
     http://localhost:8080/users
 
-#### Cadastrar
-Para criar um cadastro, basta enviar um `POST` para  a rota
+Para avançar as páginas de registros, deve usar a query
+
+    http://localhost:8080/users?page=<index>
+
+Onde `<index>` é o número da página que deseja acessar. Ex:
+
+    http://localhost:8080/users?page=55
+
+#### Consultando usuário pelo `id`
+Para consultar um usuário pelo seu `id`, precisa executar uma requisição `GET` para rota
+
+    http://localhost:8080/users/<id>
+    
+Onde `<id>` é o uuid do usuário. Ex:
+
+    http://localhost:8080/users/00047e76-1a43-45e6-8113-e5b9d9d259a6
+    
+#### Cadastrando um novo usuário
+Para cadastrar um novo usuário, é necessário fazer uma requisição `POST` para a seguinte rota
 
     http://localhost:8080/users
 
-Contendo um json no corpo da requisição os dados de nome, email e telefone. Ex:
+e o corpo da requisição precisa ter os campos `name`, `email` e `phone`. Ex:
 
     {
       "name": "Roberto Carlos Jr.",
-      "phone": "+55 (12) 92345-1234",
+      "phone": "+55 (12) 99623-1234",
       "email": "Roberto.Carlos2@bol.com.br" 
     }
-
-#### Atualizar
-Para atualizar um registro, basta ter o `id` do usuário (que tem o formato de uuid) e enviar um `PUT` para a rota
+    
+#### Modificando um usuário
+Para modificar um usuário, é necessário fazer uma requisição `PUT` para a rota
 
     http://localhost:8080/users/<id>
+    
+onde o campo `<id>` indica o `id` do usuário que deseja editar. E o corpo da requisição dever conter os novos campos `name`, `email` e `phone`. Ex:
+Requisição `PUT`:
 
-Contendo um json no corpo da requisição os dado atualizados do cadastro. Ex:
+    http://localhost:8080/users/00047e76-1a43-45e6-8113-e5b9d9d259a6
 
-Requsição `PUT`
-
-    http://localhost:8080/users/400bac37-4aa4-41bf-ba53-9c02bf71aa58
-
-Corpo da requisição:
+corpo da requisição:
 
     {
-      "name": "Roberto Carlos Jr.",
-      "phone": "+55 (44) 99845-1234",
-      "email": "Roberto.Carlos2@gmail.com" 
+  	  "name": "Srta. Hélio Batista",
+	  "email": "Isabel_outro-email@gmail.com",
+	  "phone": "+55 (44) 9 8448-1500"
     }
-
-
-#### Deletar
-Para deletar um registro, basta ter o `id` do usuário que quer excluir e enviar um `DELETE` para a rota
+    
+#### Deletando usuário
+Para deletar um usuário, basta realizar uma requisição `DELETE` para a rota
 
     http://localhost:8080/users/<id>
 
-Ex:
+onde o campo `<id>` se refere ao `id` do usuário que deseja excluir. Ex:
 
-    http://localhost:8080/users/400bac37-4aa4-41bf-ba53-9c02bf71aa58
-
-
-## Objetivos
-O projeto se consiste em criar um crud em Node, usando PostgreSQL.
-
-Deve ser criado um banco de dados SQL, carregado um arquivo SVG contendo 10 milhões de usuários para uma tabela com os campos `id`, `nome`, `email` e `phone`, e criar um servidor que administre a listagem, a criação, a atualização e a exclusão destes registros.
-
-TODO
-
-- [x] PostgresSQL
-  - [x] Subir uma instancia do postgresql e criar o servidor `cadastros` com uma tabela `usuarios`;
-  - [x]   Carregar o arquivo `CSV` na tabela `usuario`;
-  - [x]   Exportar dump do servidor como `SQL`, mantendo as querys de para iniciar o banco e carregar os dados;
-
-- [ ] Docker
-  - [x] Criar imagem de docker contendo o crud;
-  - [x]   Usar `docker-compose` para subir uma instância do docker contendo o `postgresql`  e a imagem do crud;
-  - [ ]   Carregar arquivo de dump em `SQL` na build do `docker-compose` e carregar os cadastros de usuários;
-
-- [ ] Crud
-  - [x] Criar servidor node com `express` na porta `8080`;
-  - [x] Configurar `routes`;
-  - [ ] API
-    - [ ] listar (GET localhost:8080/users);
-      - [x] Criar protótipo;
-      - [ ] Dados paginados;
-    - [ ] cadastrar (POST localhost:8080/users) ;
-      - [x] Criar protótipo;
-      - [x] Validação dos dados;
-      - [ ] Registro no postrgres;
-    - [ ] atualizar (PUT localhost:8080/users/<id>);
-      - [x] Criar protótipo;
-      - [x] Validar `id`;
-      - [ ] Atualizar no postres;
-    - [ ] deletar (DELETE localhost:8080/users/<id>);
-      - [x] Criar protótipo;
-      - [x] Validar `id`;
-      - [ ] Deletar do postgres;
+    http://localhost:8080/users/000002a9-1fe6-4f8a-a0c7-17cbe5666b4f
 
