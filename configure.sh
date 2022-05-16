@@ -9,7 +9,7 @@ NC='\033[0m'
 npm install
 
 # Subindo Postgres no docker.
-docker-compose up -d
+docker-compose up &
 printf "Aguardando 5s até o host do postgres estar rodando...\n"
 sleep 5
 
