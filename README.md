@@ -109,3 +109,35 @@ onde o campo `<id>` se refere ao `id` do usuário que deseja excluir. Ex:
 
     http://localhost:8080/users/000002a9-1fe6-4f8a-a0c7-17cbe5666b4f
 
+
+## Problemas ao executar `./configure.sh`
+
+### "ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?"
+Esse problema tem duas causas possíveis: O serviço do docker não está rodado, ou seu usuário não tem as permissões necessárias para executar o `docker`.
+
+Para configurar o serviço do docker em um linux com Systemd
+
+  sudo systemctl enable docker
+  sudo systemctl start docker
+
+Caso o problema ainda ocorra, trata-se de permissões do usuário. Adicione o seu usuário ao grupo docker e execute o `./configure` e os outros scripts `*.sh` desta pasta como `sudo`.
+
+  sudo usermod -aG docker $USER
+  sudo ./configure.sh
+
+### "Error starting userland proxy: listen tcp4 0.0.0.0:5432: bind: address already in use"
+Esse erro geralmente é causado por uma instância do `postgresql` rodando fora do container `docker` ou alguma outra aplicação.
+
+Rode o comando
+
+  lsof -i :5432
+
+para se assegurar de que não há nenhum arquivo sendo usado pelo processo. Casso `não retorne nada`, pode executar livremente o comando
+
+  sudo ss -lptn 'sport = :5432'
+
+ele vai retornar as informações do processo sendo executado na porta :5432. No campo `Process`, estará informado o `pid` do processo ( Ex: `users:(("postgres",pid=26058,fd=5))`) e pode utiliza-lo para matar a execução.
+
+  sudo kill <pid>
+
+E já pode executar o comando `./configure.sh` novamente, ou `sudo ./configure.sh` se necessário.
