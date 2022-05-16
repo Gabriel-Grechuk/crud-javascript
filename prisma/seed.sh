@@ -19,7 +19,7 @@ sed -i '1d' users.csv
 printf "${GREEN}Importando dados com psql...${NC}\n"
 printf "${BLUE}  >Isso provavelmente vai demorar vários minutos\n"
 printf "  >Por favor, aguarde a conclusão do processo.${NC}\n"
-printf "${RED}!!! ENTRAR SENHA PARA O POSTGRES:${NC} ${BLUE}123123${NC}\n"
+printf "${RED}!!! ENTRAR SENHA PARA O POSTGRES:${NC} 123123\n"
 psql -h localhost -d cadastro -U postgres -c "\copy usuarios(id, name, email, phone) FROM './users.csv' DELIMITER ',' CSV HEADER;"
 
 printf "${GREEN}Limpando arquivos desnecessários...${NC}\n"
